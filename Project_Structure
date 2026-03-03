@@ -1,0 +1,13 @@
+src/
+ ├── app/
+ │   ├── components/
+ │   │   ├── login/
+ │   │   ├── vote/
+ │   │   └── results/
+ │   ├── services/
+ │   │   └── voting.service.ts
+ │   ├── app.component.ts
+ │   ├── app.component.html
+ │   ├── app-routing.module.ts
+ │   └── app.module.ts
+ └── index.html
