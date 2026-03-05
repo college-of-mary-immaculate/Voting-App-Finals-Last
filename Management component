@@ -1,0 +1,87 @@
+//admin-management.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-admin-management',
+  templateUrl: './admin-management.component.html',
+  styleUrls: ['./admin-management.component.css']
+})
+export class AdminManagementComponent {
+
+  title: string = "Admin Management Panel";
+
+  addCandidate(){
+    console.log("Add Candidate clicked");
+  }
+
+  manageVoters(){
+    console.log("Manage Voters clicked");
+  }
+
+  viewReports(){
+    console.log("View Reports clicked");
+  }
+
+}
+
+//admin-management.component.html
+<div class="admin-container">
+
+  <h1>{{title}}</h1>
+
+  <div class="dashboard">
+
+    <div class="card">
+      <h2>Add Candidate</h2>
+      <p>Create or update election candidates.</p>
+      <button (click)="addCandidate()">Add</button>
+    </div>
+
+    <div class="card">
+      <h2>Manage Voters</h2>
+      <p>View and manage registered voters.</p>
+      <button (click)="manageVoters()">Manage</button>
+    </div>
+
+    <div class="card">
+      <h2>Reports</h2>
+      <p>View election reports and results.</p>
+      <button (click)="viewReports()">View</button>
+    </div>
+
+  </div>
+
+</div>
+//admin-management.component.css
+.admin-container{
+    text-align:center;
+    padding:30px;
+}
+
+.dashboard{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:30px;
+}
+
+.card{
+    border:1px solid #ccc;
+    padding:20px;
+    width:220px;
+    border-radius:10px;
+}
+
+button{
+    padding:10px 15px;
+    margin-top:10px;
+    cursor:pointer;
+    background:#d32f2f;
+    color:white;
+    border:none;
+    border-radius:5px;
+}
+
+button:hover{
+    background:#b71c1c;
+}
