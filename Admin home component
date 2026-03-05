@@ -1,0 +1,75 @@
+//admin-home.component.ts
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-admin-home',
+  templateUrl: './admin-home.component.html',
+  styleUrls: ['./admin-home.component.css']
+})
+export class AdminHomeComponent {
+
+  title: string = "Admin Dashboard";
+
+}
+
+//admin-home.component.html
+
+Html
+
+<div class="admin-container">
+
+  <h1>{{title}}</h1>
+
+  <div class="dashboard">
+
+    <div class="card">
+      <h2>Manage Candidates</h2>
+      <p>Add or edit candidates for the election.</p>
+      <button>Manage</button>
+    </div>
+
+    <div class="card">
+      <h2>Manage Voters</h2>
+      <p>View and manage registered voters.</p>
+      <button>View</button>
+    </div>
+
+    <div class="card">
+      <h2>View Results</h2>
+      <p>Check current voting results.</p>
+      <button>View Results</button>
+    </div>
+
+  </div>
+
+</div>
+
+//admin-home.component.css
+
+Css
+
+.admin-container{
+    text-align:center;
+    padding:30px;
+}
+
+.dashboard{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:30px;
+}
+
+.card{
+    border:1px solid #ccc;
+    padding:20px;
+    width:200px;
+    border-radius:10px;
+}
+
+button{
+    padding:8px 15px;
+    margin-top:10px;
+    cursor:pointer;
+}
