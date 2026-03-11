@@ -1,5 +1,13 @@
 //user-functions.component.ts
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
+interface DashboardItem {
+  title: string;
+  description: string;
+  buttonText: string;
+  route: string;
+}
 
 @Component({
   selector: 'app-user-functions',
@@ -8,77 +16,96 @@ import { Component } from '@angular/core';
 })
 export class UserFunctionsComponent {
 
-  title: string = "Voter Dashboard";
+  pageTitle: string = "Voter Dashboard";
 
-  vote(){
-    console.log("User clicked Vote");
-  }
+  dashboardItems: DashboardItem[] = [
+    {
+      title: "Vote",
+      description: "Cast your vote for your preferred candidate.",
+      buttonText: "Vote Now",
+      route: "/vote"
+    },
+    {
+      title: "View Candidates",
+      description: "See the list of candidates running in the election.",
+      buttonText: "View",
+      route: "/candidates"
+    },
+    {
+      title: "View Results",
+      description: "Check the latest voting results.",
+      buttonText: "Results",
+      route: "/results"
+    }
+  ];
 
-  viewCandidates(){
-    console.log("User clicked View Candidates");
-  }
+  constructor(private router: Router) {}
 
-  viewResults(){
-    console.log("User clicked View Results");
+  navigate(route: string): void {
+    this.router.navigate([route]);
   }
 
 }
-//user-functions.component.html
+// user-functions.component.html
+
 <div class="user-container">
 
-  <h1>{{title}}</h1>
+  <h1>{{ pageTitle }}</h1>
 
   <div class="dashboard">
 
-    <div class="card">
-      <h2>Vote</h2>
-      <p>Cast your vote for your preferred candidate.</p>
-      <button (click)="vote()">Vote Now</button>
-    </div>
+    <div class="card" *ngFor="let item of dashboardItems">
 
-    <div class="card">
-      <h2>View Candidates</h2>
-      <p>See the list of candidates running in the election.</p>
-      <button (click)="viewCandidates()">View</button>
-    </div>
+      <h2>{{ item.title }}</h2>
+      <p>{{ item.description }}</p>
 
-    <div class="card">
-      <h2>View Results</h2>
-      <p>Check the latest voting results.</p>
-      <button (click)="viewResults()">Results</button>
+      <button (click)="navigate(item.route)">
+        {{ item.buttonText }}
+      </button>
+
     </div>
 
   </div>
 
 </div>
 
-//user-functions.component.css
+// user-functions.component.css
+
 .user-container{
     text-align:center;
-    padding:30px;
+    padding:40px;
 }
 
 .dashboard{
     display:flex;
     justify-content:center;
-    gap:20px;
-    margin-top:30px;
+    flex-wrap:wrap;
+    gap:25px;
+    margin-top:40px;
 }
 
 .card{
-    border:1px solid #ccc;
-    padding:20px;
-    width:220px;
-    border-radius:10px;
+    border:1px solid #ddd;
+    padding:25px;
+    width:240px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
 }
 
 button{
-    padding:8px 15px;
-    margin-top:10px;
+    padding:10px 18px;
+    margin-top:12px;
     cursor:pointer;
     background:#4CAF50;
     color:white;
     border:none;
+    border-radius:5px;
+    font-weight:bold;
 }
 
 button:hover{
