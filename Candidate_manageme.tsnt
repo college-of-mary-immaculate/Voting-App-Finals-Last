@@ -1,57 +1,112 @@
 import { Component, OnInit } from '@angular/core';
 
+interface Candidate {
+  id: number;
+  firstName: string;
+  lastName: string;
+}
+
 @Component({
   selector: 'app-admin-management',
   templateUrl: './admin-management.component.html',
   styleUrls: ['./admin-management.component.css']
 })
 export class AdminManagementComponent implements OnInit {
-
-  candidates: string[] = [];
+  candidates: Candidate[] = [];
   newCandidate: string = '';
+  errorMessage: string = '';
+  isLoading = false;
+
+  // Adjust this to the correct backend URL/port if needed
+  private readonly apiBase = '/api/candidate';
 
   ngOnInit(): void {
     this.loadCandidates();
   }
 
-  loadCandidates(): void {
-    const storedCandidates = localStorage.getItem('candidates');
+  async loadCandidates(): Promise<void> {
+    this.isLoading = true;
+    this.errorMessage = '';
 
-    if (storedCandidates) {
-      this.candidates = JSON.parse(storedCandidates);
-    } else {
-      this.candidates = ['Candidate A', 'Candidate B', 'Candidate C'];
-      this.saveCandidates();
+    try {
+      const response = await fetch(this.apiBase);
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      this.candidates = (data ?? []).map((c: any) => ({
+        id: c.id,
+        firstName: c.firstName,
+        lastName: c.lastName
+      }));
+    } catch (error: any) {
+      console.error(error);
+      this.errorMessage = error?.message || 'Unable to load candidates.';
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  saveCandidates(): void {
-    localStorage.setItem('candidates', JSON.stringify(this.candidates));
+  async addCandidate(): Promise<void> {
+    const value = this.newCandidate.trim();
+    if (!value) return;
+
+    const parts = value.split(' ');
+    const firstName = parts[0];
+    const lastName = parts.slice(1).join(' ') || '';
+
+    const payload = {
+      firstName,
+      lastName,
+      dateOfBirth: new Date().toISOString(),
+      position: 'Candidate'
+    };
+
+    try {
+      const response = await fetch(`${this.apiBase}/election/1`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`Failed to add candidate: ${response.status} ${response.statusText} ${body}`);
+      }
+
+      await this.loadCandidates();
+      this.newCandidate = '';
+    } catch (error: any) {
+      console.error(error);
+      this.errorMessage = error?.message || 'Unable to add candidate.';
+    }
   }
 
-  addCandidate(): void {
+  async deleteCandidate(candidateId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.apiBase}/${candidateId}`, {
+        method: 'DELETE'
+      });
 
-    const name = this.newCandidate.trim();
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`Failed to delete candidate: ${response.status} ${response.statusText} ${body}`);
+      }
 
-    if (!name) return;
-
-    this.candidates.push(name);
-    this.saveCandidates();
-
-    this.newCandidate = '';
+      await this.loadCandidates();
+    } catch (error: any) {
+      console.error(error);
+      this.errorMessage = error?.message || 'Unable to delete candidate.';
+    }
   }
-
-  deleteCandidate(index: number): void {
-    this.candidates.splice(index, 1);
-    this.saveCandidates();
-  }
-
 }
 
 //admin-management.component.html
 
 <div class="admin-container">
-
   <h1>Candidate Management</h1>
 
   <div class="add-section">
@@ -64,20 +119,20 @@ export class AdminManagementComponent implements OnInit {
     <button (click)="addCandidate()">Add Candidate</button>
   </div>
 
-  <div class="candidate-list">
-
-    <div class="candidate-card" *ngFor="let candidate of candidates; let i = index">
-
-      <h3>{{candidate}}</h3>
-
-      <button class="delete" (click)="deleteCandidate(i)">
-        Delete
-      </button>
-
-    </div>
-
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
   </div>
 
+  <div class="candidate-list">
+    <div class="candidate-card" *ngFor="let candidate of candidates">
+      <h3>{{ candidate.firstName }} {{ candidate.lastName }}</h3>
+      <button class="delete" (click)="deleteCandidate(candidate.id)">Delete</button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    Loading candidates...
+  </div>
 </div>
 //admin-management.component.css
 
